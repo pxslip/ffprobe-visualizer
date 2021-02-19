@@ -1,0 +1,25 @@
+name: Docker Image CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  release:
+    if: github.event.action == 'release'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: $GITHUB_REF
+  pr:
+    if: github.event.action == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: gitub.event.number
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag psxlip/ffprobe-visualizer:$VERSION
