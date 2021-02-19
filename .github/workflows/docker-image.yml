@@ -2,26 +2,27 @@ name: Docker Image CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   release:
-    types: [ published ]
+    types: [published]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Build the Docker image
-    - uses: actions/checkout@v2
+      - name: Build the Docker image
+      - uses: actions/checkout@v2
 
-    - name: Set Version
-      env:
-        IS_RELEASE: github.event.action == "release"
-      run: |
-        if ${IS_RELEASE} == true; then
-          echo "VERSION=${{GITHUB_REF}}"
-          echo "VERSION set to ${{GITHUB_REF}}"
-        else
-          echo "VERSION=${{gitub.event.number}}"
-          echo "VERSION set to ${{gitub.event.number}}"
-        fi
-      run: docker build . --file Dockerfile --tag psxlip/ffprobe-visualizer:${{env.VERSION}}
+      - name: Set Version
+        env:
+          IS_RELEASE: github.event.action == "release"
+        run: |
+          if ${IS_RELEASE} == true; then
+            echo "VERSION=${{GITHUB_REF}}"
+            echo "VERSION set to ${{GITHUB_REF}}"
+          else
+            echo "VERSION=${{gitub.event.number}}"
+            echo "VERSION set to ${{gitub.event.number}}"
+          fi
+      - name: Build the image
+        run: docker build . --file Dockerfile --tag psxlip/ffprobe-visualizer:${{env.VERSION}}
