@@ -1,6 +1,5 @@
 import distutils.spawn
 from subprocess import PIPE, Popen
-import asyncio
 import click
 import dash
 from dash.dependencies import Input, Output
@@ -9,7 +8,7 @@ import dash_html_components as html
 import plotly.express as px
 from pandas import DataFrame
 from threading  import Thread
-from queue import Queue, Empty
+from queue import Queue
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -45,10 +44,6 @@ def handleFfprobeOutput(out, queue: Queue):
     values = line.decode('utf-8').split('|')
     if values[0].lower() == 'frame':
       queue.put(values)
-      # for value in values:
-      #   data = value.split('=')
-      #   if len(data) > 1 and (data[0] == 'pkt_pts_time' or data[0] == 'pkt_size'):
-      #     queue.put(data)
   out.close()
 
 def runFfprobe(infile):
@@ -95,7 +90,6 @@ def updateFigure(n):
     fig = px.bar(data_frame=dataFrame, x='pkt_pts_time', y='pkt_size', hover_data=dict.keys())
   else:
     disabled = True
-  click.echo(dataFrame)
   return (fig, disabled)
 
 @click.command()
